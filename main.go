@@ -25,7 +25,7 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-    log.Println(*verbose)
+    // log.Println(*verbose)
 
     gameLinks := filter.ProcessGamePage(gamePage, downProxy)
     if 0 == len(gameLinks) {
@@ -40,6 +40,5 @@ func main() {
         return
     }
 
-    filter.StartDownload(gameLinks)
-
+    filter.StartDownload(gameLinks, downProxy)
 }
