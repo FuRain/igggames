@@ -6,16 +6,17 @@ import (
 	"os"
 	"fmt"
     "igggames/filter"
+    "igggames/downloader"
 )
 
 func main() {
 	var gamePage string
 	var downProxy string
-	var threadCount int
+	// var threadCount int
 
 	flag.StringVar(&gamePage, "url", "", "start download game page.")
 	flag.StringVar(&downProxy, "proxy", "", "support http/https/socks5 download proxy.")
-	flag.IntVar(&threadCount, "thread", 2, "simultaneous download threads count.")
+	// flag.IntVar(&threadCount, "thread", 2, "simultaneous download threads count.")
     verbose := flag.Bool("v", false, "print game download link and exit.")
 
 	flag.Parse()
@@ -40,5 +41,8 @@ func main() {
         return
     }
 
-    filter.StartDownload(gameLinks, downProxy)
+    for _, v := range gameLinks {
+        realLink := filter.GetDownloadLink(v.Link, downProxy)
+        downloader.DownloadShowBar(realLink.Link, "/home/bruce/rain/temp/my_download/" + realLink.LinkInfo)
+    }
 }

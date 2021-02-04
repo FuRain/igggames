@@ -74,7 +74,7 @@ func ProcessGamePage(url string, proxyURL string) []GameLink {
 	return links
 }
 
-func StartDownload(gameList []GameLink, proxyURL string) {
+func GetDownloadLink(gameLink string, proxyURL string) GameLink {
     // create downloader.
     var downCookie string = ""
     var downFileName string = ""
@@ -103,14 +103,17 @@ func StartDownload(gameList []GameLink, proxyURL string) {
     })
 
 	downloader.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36"
+
 	downloader.OnRequest(func(r *colly.Request) {
-        r.Headers.Set("accept-encoding", "gzip, deflate, br")
-        r.Headers.Set("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
+        r.Headers.Set("Host", downWebsite)
+        // r.Headers.Set("accept-encoding", "gzip, deflate, br")
+        r.Headers.Set("accept", "*/*")
+        // r.Headers.Set("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
 
         if "" != downCookie {
-            r.Headers.Set("Set-Cookie", downCookie)
+            r.Headers.Set("Cookie", downCookie)
         }
-		// fmt.Println("Downloader Visiting", r.URL.String())
+		// fmt.Println("Downloader Visiting", r.URL.String(), r.Headers)
 	})
 
     downloader.OnResponse(func(r *colly.Response) {
@@ -159,7 +162,7 @@ func StartDownload(gameList []GameLink, proxyURL string) {
             return
         }
 
-        time.Sleep(time.Duration(5)*time.Second)
+        time.Sleep(time.Duration(6)*time.Second)
         if "" != downCookie {
             err = downloader.Visit(realDownLink)
             if err != nil && err.Error() != "Found" {
@@ -175,18 +178,10 @@ func StartDownload(gameList []GameLink, proxyURL string) {
 		// fmt.Println("Visiting", r.URL.String())
 	})
 
-    for i, val := range gameList {
-        log.Printf("start download, id: %d, link: %s\n", i+1, val.Link)
-
-        // downCookie = ""
-        downFileName = ""
-        realGameDownLink = ""
-
-	    c.Visit(val.Link)
-
-        fmt.Println(downFileName, realGameDownLink)
-
-        log.Println("over.")
-        // return
+	c.Visit(gameLink)
+    // fmt.Println(downFileName, realGameDownLink)
+    return GameLink {
+        LinkInfo : downFileName,
+        Link : realGameDownLink,
     }
 }
