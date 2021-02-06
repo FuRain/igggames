@@ -7,7 +7,6 @@ import (
 	"igggames/filter"
 	"log"
 	"os"
-	"strings"
 )
 
 func main() {
@@ -53,14 +52,10 @@ func main() {
 		return
 	}
 
-	if !strings.HasSuffix(gameOutputDir, "/") {
-		gameOutputDir += "/"
-	}
-
-    // start download games.
+	// start download games.
 	for _, v := range gameLinks {
 		realLink := filter.GetDownloadLink(v.Link, downProxy)
-		down.AddJob(realLink.Link, gameOutputDir+realLink.LinkInfo, realLink.LinkInfo)
+		down.AddJob(realLink.Link, gameOutputDir, realLink.LinkInfo)
 	}
 
 	down.WaitExit()
