@@ -55,6 +55,8 @@ func main() {
 	// start download games.
 	for _, v := range gameLinks {
 		realLink := filter.GetDownloadLink(v.Link, downProxy)
+        fmt.Println(realLink)
+        return
 		down.AddJob(realLink.Link, gameOutputDir, realLink.LinkInfo)
 	}
 
